@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // The app reads its API endpoint/key config from here at runtime.
+    // Only the `api` document is exposed, and only for reads.
+    match /app_config/api {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Everything else (including usage/* counters and any other
+    // app_config docs) is admin/console-only until a Cloud Functions
+    // backend exists to manage it server-side.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

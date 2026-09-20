@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1097959513700",
+    "project_id": "vidzora-85954",
+    "storage_bucket": "vidzora-85954.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097959513700:android:ebd3e638f8398b480b4971",
+        "android_client_info": {
+          "package_name": "com.dasun.vidzora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvEMKty47geNMV-L2Oety0DnsSluAaR3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
