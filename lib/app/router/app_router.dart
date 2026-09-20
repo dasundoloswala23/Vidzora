@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/downloads/downloads_screen.dart';
@@ -10,15 +11,30 @@ import '../../features/splash/splash_screen.dart';
 import '../../providers/onboarding_providers.dart';
 import 'route_paths.dart';
 
-/// Builds the app's [GoRouter]. Rebuilt whenever [hasSeenOnboardingProvider]
-/// changes, so its redirect logic always reflects the latest onboarding
-/// state (per the Riverpod + go_router refresh pattern).
+/// Notifies go_router to re-run its `redirect` when [hasSeenOnboardingProvider]
+/// changes, without recreating the [GoRouter] instance itself (see
+/// [appRouterProvider] for why that distinction matters).
+class _OnboardingRefreshListenable extends ChangeNotifier {
+  _OnboardingRefreshListenable(Ref ref) {
+    ref.listen<bool>(hasSeenOnboardingProvider, (_, _) => notifyListeners());
+  }
+}
+
+/// Builds the app's [GoRouter] exactly once (this provider deliberately
+/// never `ref.watch`es anything, so it never rebuilds). A fresh [GoRouter]
+/// jumps back to [RoutePaths.splash] on construction, so recreating it every
+/// time onboarding state changed used to bounce the user back to the splash
+/// screen right after finishing onboarding. Instead, [_OnboardingRefreshListenable]
+/// tells this same long-lived router to just re-run `redirect`.
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+  final refreshListenable = _OnboardingRefreshListenable(ref);
+  ref.onDispose(refreshListenable.dispose);
 
   return GoRouter(
     initialLocation: RoutePaths.splash,
+    refreshListenable: refreshListenable,
     redirect: (context, state) {
+      final hasSeenOnboarding = ref.read(hasSeenOnboardingProvider);
       final path = state.matchedLocation;
 
       if (path == RoutePaths.splash) return null;
