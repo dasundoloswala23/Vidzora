@@ -47,6 +47,10 @@ dependencies:
   firebase_core: ^4.15.0
   uuid: ^4.6.0
   cloud_firestore: ^6.10.0
+  in_app_update: ^5.0.0
+  in_app_review: ^2.0.12
+  package_info_plus: ^10.2.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

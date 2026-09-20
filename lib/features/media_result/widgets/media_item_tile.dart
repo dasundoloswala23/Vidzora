@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -9,6 +10,7 @@ import '../../../models/media_item.dart';
 import '../../../providers/ad_providers.dart';
 import '../../../providers/download_providers.dart';
 import '../../../providers/settings_providers.dart';
+import '../../../providers/update_providers.dart';
 import '../../../services/download/download_service.dart';
 import '../../../services/gallery/gallery_service.dart';
 
@@ -127,6 +129,7 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
             );
 
         ref.read(interstitialAdServiceProvider).registerDownloadCompleted();
+        unawaited(_maybePromptForReview());
 
         if (mounted) _showMessage('Saved "${widget.sourceTitle}".');
       },
@@ -136,6 +139,21 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
     );
 
     if (mounted) setState(() => _isBusy = false);
+  }
+
+  /// After a few successful downloads, prompt once for a store review.
+  /// Both Play Core and `SKStoreReviewController` self-throttle how often
+  /// the native dialog can actually appear, but this still only *asks* once
+  /// per install so it isn't intrusive.
+  Future<void> _maybePromptForReview() async {
+    final promptRepo = ref.read(reviewPromptRepositoryProvider);
+    if (promptRepo.hasRequestedReview) return;
+
+    final totalDownloads = ref.read(downloadHistoryProvider).length;
+    if (totalDownloads < 3) return;
+
+    await promptRepo.markRequested();
+    await ref.read(reviewServiceProvider).requestReview();
   }
 
   void _showMessage(String message, {bool isError = false}) {

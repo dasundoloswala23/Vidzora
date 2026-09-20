@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/store_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/update_available_dialog.dart';
 import '../../models/enums/download_quality.dart';
 import '../../providers/download_providers.dart';
 import '../../providers/settings_providers.dart';
+import '../../providers/update_providers.dart';
 import 'widgets/clear_history_row.dart';
 import 'widgets/settings_section.dart';
 import 'widgets/settings_toggle_row.dart';
@@ -48,6 +52,39 @@ class SettingsScreen extends ConsumerWidget {
     if (selected != null) {
       await ref.read(appSettingsProvider.notifier).setDownloadQuality(selected);
     }
+  }
+
+  Future<void> _checkForUpdate(BuildContext context, WidgetRef ref) async {
+    final updateService = ref.read(appUpdateServiceProvider);
+    final result = await updateService.checkForUpdate();
+    if (!context.mounted) return;
+
+    if (!result.updateAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("You're on the latest version.")),
+      );
+      return;
+    }
+
+    await UpdateAvailableDialog.show(
+      context,
+      storeVersion: result.storeVersion,
+      onUpdate: () async {
+        if (Platform.isAndroid) {
+          if (result.androidImmediateAllowed) {
+            await updateService.startAndroidImmediateUpdate();
+          } else {
+            await updateService.startAndroidFlexibleUpdate();
+          }
+        } else if (Platform.isIOS) {
+          final uri = Uri.parse(result.storeUrl ?? StoreConfig.iosAppStoreUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+        if (context.mounted) Navigator.of(context).pop();
+      },
+    );
   }
 
   Future<void> _confirmClearHistory(BuildContext context, WidgetRef ref) async {
@@ -195,12 +232,24 @@ class SettingsScreen extends ConsumerWidget {
                   value: AppConstants.appVersion,
                   valueColor: AppColors.textSecondary,
                 ),
+                SettingsValueRow(
+                  label: 'Check for Updates',
+                  value: '',
+                  showChevron: true,
+                  onTap: () => _checkForUpdate(context, ref),
+                ),
               ],
             ),
             const SizedBox(height: 20),
             SettingsSection(
               label: 'Support',
               children: [
+                SettingsValueRow(
+                  label: 'Rate Vidzora',
+                  value: '',
+                  showChevron: true,
+                  onTap: () => ref.read(reviewServiceProvider).requestReview(),
+                ),
                 SettingsValueRow(
                   label: 'Contact Us',
                   value: '',

@@ -1,14 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../app/router/route_paths.dart';
+import '../../core/constants/store_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/url_validator.dart';
 import '../../core/widgets/info_banner.dart';
 import '../../core/widgets/primary_pill_button.dart';
 import '../../core/widgets/section_label.dart';
+import '../../core/widgets/update_available_dialog.dart';
 import '../../core/widgets/vidzora_logo.dart';
 import '../../providers/api_providers.dart';
+import '../../providers/update_providers.dart';
 import 'widgets/ad_banner_slot.dart';
 import 'widgets/supported_platforms_row.dart';
 import 'widgets/url_input_field.dart';
@@ -26,9 +31,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _url = '';
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForUpdate());
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkForUpdate() async {
+    final updateService = ref.read(appUpdateServiceProvider);
+    final result = await updateService.checkForUpdate();
+    if (!mounted || !result.updateAvailable) return;
+
+    await UpdateAvailableDialog.show(
+      context,
+      storeVersion: result.storeVersion,
+      onUpdate: () async {
+        if (Platform.isAndroid) {
+          if (result.androidImmediateAllowed) {
+            await updateService.startAndroidImmediateUpdate();
+          } else {
+            await updateService.startAndroidFlexibleUpdate();
+          }
+        } else if (Platform.isIOS) {
+          final uri = Uri.parse(result.storeUrl ?? StoreConfig.iosAppStoreUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+        if (mounted) Navigator.of(context).pop();
+      },
+    );
   }
 
   Future<void> _fetch() async {

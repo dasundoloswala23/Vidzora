@@ -9,4 +9,7 @@ class HiveBoxNames {
 
   static const String onboardingBox = 'onboarding_box';
   static const String hasSeenOnboardingKey = 'has_seen_onboarding';
+
+  // Reuses the onboarding box as a general small "app flags" box.
+  static const String hasRequestedReviewKey = 'has_requested_review';
 }
