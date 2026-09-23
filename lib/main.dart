@@ -19,13 +19,18 @@ Future<void> main() async {
   await Hive.openBox<AppSettings>(HiveBoxNames.settingsBox);
   await Hive.openBox(HiveBoxNames.onboardingBox);
 
-  try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  } catch (e) {
-    debugPrint('Firebase init failed: $e');
-  }
-
-  await MobileAds.instance.initialize();
+  await Future.wait<void>([
+    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+        .then<void>((_) {})
+        .catchError((e) {
+      debugPrint('Firebase init failed: $e');
+    }),
+    MobileAds.instance.initialize()
+        .then<void>((_) {})
+        .catchError((e) {
+      debugPrint('MobileAds init failed: $e');
+    }),
+  ]);
 
   runApp(const ProviderScope(child: VidzoraApp()));
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// A small-caps grey section label, e.g. "SUPPORTED PLATFORMS" or "GENERAL".
 class SectionLabel extends StatelessWidget {
@@ -14,8 +14,8 @@ class SectionLabel extends StatelessWidget {
       padding: padding ?? const EdgeInsets.only(bottom: 8, left: 4),
       child: Text(
         text.toUpperCase(),
-        style: const TextStyle(
-          color: AppColors.textSecondary,
+        style: TextStyle(
+          color: context.colors.onSurfaceVariant,
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,

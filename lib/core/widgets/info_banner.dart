@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// A light-purple rounded info banner with a leading circle-info icon.
 class InfoBanner extends StatelessWidget {
@@ -23,8 +24,8 @@ class InfoBanner extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: context.colors.onSurfaceVariant,
                 fontSize: 13,
                 height: 1.4,
               ),

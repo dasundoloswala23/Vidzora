@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../models/enums/media_type.dart';
 
 /// The "All / Videos / Audio" filter chip row on the Downloads screen.
@@ -15,19 +16,19 @@ class FilterChipBar extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _chip(label: 'All', value: null),
+          _chip(context, label: 'All', value: null),
           const SizedBox(width: 8),
-          _chip(label: 'Videos', value: MediaType.video),
+          _chip(context, label: 'Videos', value: MediaType.video),
           const SizedBox(width: 8),
-          _chip(label: 'Audio', value: MediaType.audio),
+          _chip(context, label: 'Audio', value: MediaType.audio),
           const SizedBox(width: 8),
-          _chip(label: 'Images', value: MediaType.image),
+          _chip(context, label: 'Images', value: MediaType.image),
         ],
       ),
     );
   }
 
-  Widget _chip({required String label, required MediaType? value}) {
+  Widget _chip(BuildContext context, {required String label, required MediaType? value}) {
     final isActive = selected == value;
     return GestureDetector(
       onTap: () => onChanged(value),
@@ -37,13 +38,13 @@ class FilterChipBar extends StatelessWidget {
           color: isActive ? AppColors.primaryPurple : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? AppColors.primaryPurple : AppColors.dividerGrey,
+            color: isActive ? AppColors.primaryPurple : context.dividerColor,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : AppColors.textSecondary,
+            color: isActive ? Colors.white : context.colors.onSurfaceVariant,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),

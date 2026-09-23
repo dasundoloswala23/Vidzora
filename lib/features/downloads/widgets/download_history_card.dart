@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/supported_platforms.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../models/download_history_entry.dart';
 import '../../../models/enums/media_type.dart';
@@ -20,7 +20,7 @@ class DownloadHistoryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surfaceWhite,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -51,15 +51,15 @@ class DownloadHistoryCard extends StatelessWidget {
                   entry.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${platform.label} · ${entry.format.toUpperCase()} · ${entry.quality}',
+                  '${entry.format.toUpperCase()} · ${entry.quality}',
                   style: TextStyle(fontSize: 12, color: platform.color),
                 ),
               ],
@@ -71,21 +71,21 @@ class DownloadHistoryCard extends StatelessWidget {
             children: [
               Text(
                 Formatters.fileSize(entry.fileSizeBytes),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 Formatters.relativeDate(entry.downloadedAt),
-                style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 11, color: context.colors.onSurfaceVariant),
               ),
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert_rounded, color: AppColors.textSecondary),
+            icon: Icon(Icons.more_vert_rounded, color: context.colors.onSurfaceVariant),
             onPressed: onMorePressed,
           ),
         ],

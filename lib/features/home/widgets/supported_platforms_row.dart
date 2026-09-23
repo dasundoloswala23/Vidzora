@@ -14,7 +14,7 @@ class SupportedPlatformsRow extends StatelessWidget {
         children: [
           for (final platform in SupportedPlatforms.all) ...[
             PlatformChip(platform: platform),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
           ],
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../models/media_item.dart';
 import '../../providers/api_providers.dart';
 import 'widgets/media_item_tile.dart';
@@ -32,9 +33,9 @@ class MediaResultScreen extends ConsumerWidget {
                         response.thumbnail,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stack) => Container(
-                          color: AppColors.dividerGrey,
+                          color: context.colors.surfaceContainerHighest,
                           alignment: Alignment.center,
-                          child: const Icon(Icons.image_rounded, color: AppColors.textSecondary),
+                          child: Icon(Icons.image_rounded, color: context.colors.onSurfaceVariant),
                         ),
                       ),
                     ),
@@ -46,16 +47,16 @@ class MediaResultScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           response.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: context.colors.onSurface,
                           ),
                         ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.copy_rounded, size: 20),
-                        color: AppColors.textSecondary,
+                        color: context.colors.onSurfaceVariant,
                         tooltip: 'Copy title & hashtags',
                         visualDensity: VisualDensity.compact,
                         onPressed: response.title.isEmpty
@@ -67,15 +68,15 @@ class MediaResultScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     response.uniqueId,
-                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                    style: TextStyle(fontSize: 13, color: context.colors.onSurfaceVariant),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Available Downloads',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: context.colors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -89,12 +90,12 @@ class MediaResultScreen extends ConsumerWidget {
                     ),
                   if (response.thumbnail.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Thumbnail',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 12),

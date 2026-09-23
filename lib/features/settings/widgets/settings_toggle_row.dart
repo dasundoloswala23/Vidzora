@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// A settings row with a label and a trailing [Switch].
 class SettingsToggleRow extends StatelessWidget {
@@ -23,7 +24,7 @@ class SettingsToggleRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 14, color: context.colors.onSurface),
             ),
           ),
           Switch(value: value, onChanged: onChanged, activeThumbColor: AppColors.primaryPurple),

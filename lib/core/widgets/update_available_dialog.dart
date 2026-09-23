@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_theme_extensions.dart';
 import 'primary_pill_button.dart';
 
 /// A themed "Update Available" dialog shown when a newer store version is
@@ -60,9 +61,9 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog> {
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'Update Available',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.onSurface),
             ),
             const SizedBox(height: 8),
             Text(
@@ -70,7 +71,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog> {
                   ? 'Vidzora ${widget.storeVersion} is ready with the latest features and fixes.'
                   : 'A new version of Vidzora is ready to install.',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant),
             ),
             const SizedBox(height: 22),
             PrimaryPillButton(
@@ -81,7 +82,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog> {
             const SizedBox(height: 4),
             TextButton(
               onPressed: _isUpdating ? null : () => Navigator.of(context).pop(),
-              child: const Text('Later', style: TextStyle(color: AppColors.textSecondary)),
+              child: Text('Later', style: TextStyle(color: context.colors.onSurfaceVariant)),
             ),
           ],
         ),

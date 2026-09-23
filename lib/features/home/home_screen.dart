@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../app/router/route_paths.dart';
 import '../../core/constants/store_config.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/url_validator.dart';
 import '../../core/widgets/primary_pill_button.dart';
 import '../../core/widgets/update_available_dialog.dart';
@@ -102,9 +102,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const CircleAvatar(
-              backgroundColor: AppColors.surfaceWhite,
-              child: Icon(Icons.settings_rounded, color: AppColors.textPrimary, size: 20),
+            icon: CircleAvatar(
+              backgroundColor: context.cardColor,
+              child: Icon(Icons.settings_rounded, color: context.colors.onSurface, size: 20),
             ),
             onPressed: () => context.go(RoutePaths.settings),
           ),
@@ -117,24 +117,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Save videos from your favorite platforms',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Paste a video link below to get available download options.',
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant),
               ),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceWhite,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(

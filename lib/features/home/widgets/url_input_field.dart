@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// A rounded text field with a link icon and a paste-from-clipboard action.
 class UrlInputField extends StatelessWidget {
@@ -23,11 +24,11 @@ class UrlInputField extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
-      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+      style: TextStyle(fontSize: 14, color: context.colors.onSurface),
       decoration: InputDecoration(
         hintText: 'Paste video URL',
-        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-        prefixIcon: const Icon(Icons.link_rounded, color: AppColors.textSecondary),
+        hintStyle: TextStyle(color: context.colors.onSurfaceVariant, fontSize: 14),
+        prefixIcon: Icon(Icons.link_rounded, color: context.colors.onSurfaceVariant),
         suffixIcon: IconButton(
           icon: const Icon(Icons.content_paste_rounded, color: AppColors.primaryPurple),
           onPressed: _pasteFromClipboard,

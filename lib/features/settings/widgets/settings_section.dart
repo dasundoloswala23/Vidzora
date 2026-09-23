@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../core/widgets/section_label.dart';
 
 /// A labeled white rounded card grouping related settings rows, with
@@ -18,7 +18,7 @@ class SettingsSection extends StatelessWidget {
         SectionLabel(text: label),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surfaceWhite,
+            color: context.cardColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(

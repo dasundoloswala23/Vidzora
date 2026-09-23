@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// "Clear Download History" row with a red "Clear" action on the right.
 class ClearHistoryRow extends StatelessWidget {
@@ -13,10 +14,10 @@ class ClearHistoryRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               'Clear Download History',
-              style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 14, color: context.colors.onSurface),
             ),
           ),
           TextButton(

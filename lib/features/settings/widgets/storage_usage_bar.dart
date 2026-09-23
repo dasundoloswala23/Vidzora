@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// A thin horizontal progress bar showing storage usage, purple fill on a
 /// light-grey track.
@@ -16,7 +17,7 @@ class StorageUsageBar extends StatelessWidget {
       child: LinearProgressIndicator(
         value: fraction.clamp(0.0, 1.0),
         minHeight: 6,
-        backgroundColor: AppColors.dividerGrey,
+        backgroundColor: context.dividerColor,
         valueColor: const AlwaysStoppedAnimation(AppColors.primaryPurple),
       ),
     );

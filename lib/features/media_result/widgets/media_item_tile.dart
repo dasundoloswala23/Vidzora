@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../models/download_history_entry.dart';
 import '../../../models/enums/media_type.dart';
@@ -190,7 +191,7 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surfaceWhite,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -216,23 +217,23 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
                         item.displayLabel,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                          color: context.colors.onSurface,
                         ),
                       ),
                     ),
                     if (item.isHd) ...[
                       const SizedBox(width: 6),
-                      const Icon(Icons.lock_rounded, size: 14, color: AppColors.textSecondary),
+                      Icon(Icons.lock_rounded, size: 14, color: context.colors.onSurfaceVariant),
                     ],
                   ],
                 ),
                 const SizedBox(height: 2),
                 Text(
                   Formatters.fileSize(item.dataSize),
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 12, color: context.colors.onSurfaceVariant),
                 ),
                 if (progress != null) ...[
                   const SizedBox(height: 6),
@@ -241,7 +242,7 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 4,
-                      backgroundColor: AppColors.dividerGrey,
+                      backgroundColor: context.dividerColor,
                       valueColor: const AlwaysStoppedAnimation(AppColors.primaryPurple),
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// A 3-segment pill control for System / Light / Dark theme selection.
 class ThemeSegmentedControl extends StatelessWidget {
@@ -19,7 +20,7 @@ class ThemeSegmentedControl extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.backgroundLavender,
+        color: context.colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -41,7 +42,7 @@ class ThemeSegmentedControl extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: value == option.mode ? Colors.white : AppColors.textSecondary,
+                      color: value == option.mode ? Colors.white : context.colors.onSurfaceVariant,
                     ),
                   ),
                 ),

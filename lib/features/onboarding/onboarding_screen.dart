@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/router/route_paths.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../core/widgets/dot_page_indicator.dart';
 import '../../core/widgets/primary_pill_button.dart';
 import '../../providers/onboarding_providers.dart';
@@ -67,7 +68,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     final isLastPage = _index == _pages.length - 1;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLavender,
       body: SafeArea(
         child: Column(
           children: [
@@ -99,9 +99,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ? null
                   : TextButton(
                       onPressed: _finish,
-                      child: const Text(
+                      child: Text(
                         'Skip',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                        style: TextStyle(color: context.colors.onSurfaceVariant, fontSize: 14),
                       ),
                     ),
             ),

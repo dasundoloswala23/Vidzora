@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/store_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../core/widgets/update_available_dialog.dart';
 import '../../models/enums/download_quality.dart';
 import '../../providers/download_providers.dart';
@@ -152,8 +153,8 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      const Expanded(
-                        child: Text('Theme', style: TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+                      Expanded(
+                        child: Text('Theme', style: TextStyle(fontSize: 14, color: context.colors.onSurface)),
                       ),
                       SizedBox(
                         width: 180,
@@ -179,8 +180,8 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          const Expanded(
-                            child: Text('Storage Used', style: TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+                          Expanded(
+                            child: Text('Storage Used', style: TextStyle(fontSize: 14, color: context.colors.onSurface)),
                           ),
                           Text(
                             '${(storageBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
@@ -227,10 +228,10 @@ class SettingsScreen extends ConsumerWidget {
                     applicationVersion: AppConstants.appVersion,
                   ),
                 ),
-                const SettingsValueRow(
+                SettingsValueRow(
                   label: 'App Version',
                   value: AppConstants.appVersion,
-                  valueColor: AppColors.textSecondary,
+                  valueColor: context.colors.onSurfaceVariant,
                 ),
                 SettingsValueRow(
                   label: 'Check for Updates',

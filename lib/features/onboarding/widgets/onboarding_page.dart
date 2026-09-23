@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 
 /// A single onboarding page: illustration + heading + subtext.
 class OnboardingPage extends StatelessWidget {
@@ -26,19 +26,19 @@ class OnboardingPage extends StatelessWidget {
           Text(
             heading,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             subtext,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: context.colors.onSurfaceVariant,
               height: 1.5,
             ),
           ),

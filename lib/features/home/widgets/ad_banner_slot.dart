@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../providers/ad_providers.dart';
 import '../../../services/ads/ad_service.dart';
 
@@ -41,13 +41,13 @@ class _AdBannerSlotState extends ConsumerState<AdBannerSlot> {
           height: 60,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.dividerGrey.withValues(alpha: 0.5),
+            color: context.colors.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(14),
           ),
           alignment: Alignment.center,
-          child: const Text(
+          child: Text(
             'Advertisement',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            style: TextStyle(color: context.colors.onSurfaceVariant, fontSize: 12),
           ),
         );
       },
