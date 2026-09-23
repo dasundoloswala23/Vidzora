@@ -63,6 +63,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -78,6 +79,19 @@ flutter:
   assets:
     - assets/logo.png
     - assets/icon/app_icon.png
+
+# Solid brand purple, no logo: the Flutter splash renders its logo at ~40%
+# height, while native launch screens center theirs — a centered native logo
+# handing off to a 40%-height one jumps worse than no logo at all.
+flutter_native_splash:
+  color: "#7B3FE4"
+  color_dark: "#7B3FE4"
+  android: true
+  ios: true
+  web: false
+  android_12:
+    color: "#7B3FE4"
+    color_dark: "#7B3FE4"
 
 flutter_launcher_icons:
   android: true

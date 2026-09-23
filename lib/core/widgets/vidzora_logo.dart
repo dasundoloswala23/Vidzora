@@ -10,6 +10,24 @@ class VidzoraLogo extends StatelessWidget {
   final bool glow;
   final double? borderRadius;
 
+  /// The image provider for a logo rendered at [size] on a [dpr] display.
+  ///
+  /// The source asset is 1254x1254 but never renders larger than ~108dp, so
+  /// decoding it at full size wastes ~32x the memory and stalls the first
+  /// frame. Callers that want to `precacheImage` MUST go through this so they
+  /// produce the same cache key the widget renders with — otherwise the
+  /// precache populates a different entry and does nothing.
+  static ImageProvider providerFor(double size, double dpr) {
+    // The image sits inside `padding: size * 0.16` on each side.
+    final px = (size * 0.68 * dpr).ceil();
+    return ResizeImage(
+      const AssetImage('assets/logo.png'),
+      width: px,
+      height: px,
+      policy: ResizeImagePolicy.fit,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final radius = borderRadius ?? size * 0.28;
@@ -32,9 +50,10 @@ class VidzoraLogo extends StatelessWidget {
       padding: EdgeInsets.all(size * 0.16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius * 0.6),
-        child: Image.asset(
-          'assets/logo.png',
+        child: Image(
+          image: providerFor(size, MediaQuery.devicePixelRatioOf(context)),
           fit: BoxFit.contain,
+          filterQuality: FilterQuality.medium,
           errorBuilder: (context, error, stackTrace) => Icon(
             Icons.play_circle_fill_rounded,
             color: AppColors.primaryPurple,

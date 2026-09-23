@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../../core/constants/api_config.dart';
 
 /// The base URL + API key to use for the download API, for one platform.
@@ -19,10 +20,13 @@ class ApiPlatformConfig {
 /// Falls back to the local [ApiConfig] placeholder if Firestore is
 /// unreachable or the document/fields are missing.
 class RemoteApiConfigService {
-  RemoteApiConfigService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  RemoteApiConfigService({FirebaseFirestore? firestore}) : _injected = firestore;
 
-  final FirebaseFirestore _firestore;
+  /// Resolved lazily inside [getConfig]'s `try` rather than in the initializer
+  /// list: Firebase init is no longer awaited before `runApp` and can time out,
+  /// and `FirebaseFirestore.instance` throws `[core/no-app]` when it hasn't
+  /// initialized. Resolving it here lets that degrade to [_fallback].
+  final FirebaseFirestore? _injected;
 
   ApiPlatformConfig? _cached;
 
@@ -30,7 +34,11 @@ class RemoteApiConfigService {
     if (!forceRefresh && _cached != null) return _cached!;
 
     try {
-      final snapshot = await _firestore.collection('app_config').doc('api').get();
+      final firestore = _injected ??
+          (Firebase.apps.isEmpty ? null : FirebaseFirestore.instance);
+      if (firestore == null) return _fallback;
+
+      final snapshot = await firestore.collection('app_config').doc('api').get();
       final data = snapshot.data();
       if (data == null) return _fallback;
 

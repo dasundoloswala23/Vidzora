@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_text_theme.dart';
 
@@ -26,6 +27,9 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.backgroundLavender,
         foregroundColor: AppColors.textPrimary,
+        // Explicit so the splash's light status bar doesn't persist onto
+        // these light backgrounds after the hand-off.
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
@@ -106,6 +110,7 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.darkBackground,
         foregroundColor: AppColors.darkTextPrimary,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
