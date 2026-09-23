@@ -15,7 +15,6 @@ class DownloadHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final platform = SupportedPlatforms.byId(entry.platform);
-    final isAudio = entry.mediaType == MediaType.audio;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -32,14 +31,14 @@ class DownloadHistoryCard extends StatelessWidget {
               width: 46,
               height: 46,
               child: (entry.thumbnailUrl == null || entry.thumbnailUrl!.isEmpty)
-                  ? _fallbackIcon(platform.color, isAudio)
+                  ? _fallbackIcon(platform.color, entry.mediaType)
                   : Image.network(
                       entry.thumbnailUrl!,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stack) =>
-                          _fallbackIcon(platform.color, isAudio),
+                          _fallbackIcon(platform.color, entry.mediaType),
                       loadingBuilder: (context, child, progress) =>
-                          progress == null ? child : _fallbackIcon(platform.color, isAudio),
+                          progress == null ? child : _fallbackIcon(platform.color, entry.mediaType),
                     ),
             ),
           ),
@@ -94,14 +93,16 @@ class DownloadHistoryCard extends StatelessWidget {
     );
   }
 
-  Widget _fallbackIcon(Color color, bool isAudio) {
+  Widget _fallbackIcon(Color color, MediaType mediaType) {
+    final icon = switch (mediaType) {
+      MediaType.audio => Icons.music_note_rounded,
+      MediaType.image => Icons.image_rounded,
+      MediaType.video => Icons.videocam_rounded,
+    };
     return Container(
       color: color.withValues(alpha: 0.14),
       alignment: Alignment.center,
-      child: Icon(
-        isAudio ? Icons.music_note_rounded : Icons.videocam_rounded,
-        color: color,
-      ),
+      child: Icon(icon, color: color),
     );
   }
 }

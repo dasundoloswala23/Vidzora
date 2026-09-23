@@ -7,15 +7,12 @@ import '../../app/router/route_paths.dart';
 import '../../core/constants/store_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/url_validator.dart';
-import '../../core/widgets/info_banner.dart';
 import '../../core/widgets/primary_pill_button.dart';
-import '../../core/widgets/section_label.dart';
 import '../../core/widgets/update_available_dialog.dart';
 import '../../core/widgets/vidzora_logo.dart';
 import '../../providers/api_providers.dart';
 import '../../providers/update_providers.dart';
 import 'widgets/ad_banner_slot.dart';
-import 'widgets/supported_platforms_row.dart';
 import 'widgets/url_input_field.dart';
 
 /// Home screen: URL input, supported platforms, info banner, and ad slot.
@@ -162,14 +159,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
-              const SectionLabel(text: 'Supported Platforms'),
-              const SupportedPlatformsRow(),
-              const SizedBox(height: 20),
-              const InfoBanner(
-                text:
-                    'Only download content you are authorized to save. Respect content creators and platform terms of service.',
               ),
               const SizedBox(height: 20),
               const AdBannerSlot(),

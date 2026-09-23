@@ -23,6 +23,17 @@ class MediaItem {
   final int? dataSize;
   final int? duration;
 
+  /// Builds a synthetic downloadable item for a post's thumbnail image.
+  /// The thumbnail isn't part of the API's `medias` list, so this is
+  /// constructed client-side wherever a "Save Thumbnail" action is offered.
+  factory MediaItem.thumbnail(String url) {
+    final path = Uri.tryParse(url)?.path ?? '';
+    final dotIndex = path.lastIndexOf('.');
+    final ext = dotIndex == -1 ? 'jpg' : path.substring(dotIndex + 1).toLowerCase();
+    final validExt = RegExp(r'^[a-z0-9]{2,4}$').hasMatch(ext) ? ext : 'jpg';
+    return MediaItem(url: url, type: MediaType.image, quality: 'thumbnail', extension: validExt);
+  }
+
   bool get isHd => type == MediaType.video && quality.toUpperCase().contains('HD');
 
   /// A short, human-friendly quality label. The real download API returns
@@ -42,8 +53,14 @@ class MediaItem {
         return 'Watermarked';
       case 'audio':
         return 'Audio';
+      case 'image':
+        return 'Image';
       default:
-        if (normalized.isEmpty) return type == MediaType.audio ? 'Audio' : 'SD';
+        if (normalized.isEmpty) {
+          if (type == MediaType.audio) return 'Audio';
+          if (type == MediaType.image) return 'Image';
+          return 'SD';
+        }
         final words = normalized.split(RegExp(r'[_\s]+'));
         return words.map((w) => w.isEmpty ? w : w[0].toUpperCase() + w.substring(1)).join(' ');
     }
@@ -54,7 +71,11 @@ class MediaItem {
   factory MediaItem.fromJson(Map<String, dynamic> json) {
     return MediaItem(
       url: json['url'] as String? ?? '',
-      type: (json['type'] as String?) == 'audio' ? MediaType.audio : MediaType.video,
+      type: switch (json['type'] as String?) {
+        'audio' => MediaType.audio,
+        'image' => MediaType.image,
+        _ => MediaType.video,
+      },
       quality: json['quality'] as String? ?? 'SD',
       extension: json['extension'] as String? ?? 'mp4',
       width: (json['width'] as num?)?.toInt(),
@@ -69,7 +90,11 @@ class MediaItem {
   Map<String, dynamic> toJson() {
     return {
       'url': url,
-      'type': type == MediaType.audio ? 'audio' : 'video',
+      'type': switch (type) {
+        MediaType.audio => 'audio',
+        MediaType.image => 'image',
+        MediaType.video => 'video',
+      },
       'quality': quality,
       'extension': extension,
       'width': width,

@@ -11,14 +11,19 @@ class FilterChipBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _chip(label: 'All', value: null),
-        const SizedBox(width: 8),
-        _chip(label: 'Videos', value: MediaType.video),
-        const SizedBox(width: 8),
-        _chip(label: 'Audio', value: MediaType.audio),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _chip(label: 'All', value: null),
+          const SizedBox(width: 8),
+          _chip(label: 'Videos', value: MediaType.video),
+          const SizedBox(width: 8),
+          _chip(label: 'Audio', value: MediaType.audio),
+          const SizedBox(width: 8),
+          _chip(label: 'Images', value: MediaType.image),
+        ],
+      ),
     );
   }
 

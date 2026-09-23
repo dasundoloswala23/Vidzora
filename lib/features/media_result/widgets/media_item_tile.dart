@@ -103,7 +103,7 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
 
     await result.when(
       success: (path) async {
-        if (settings.saveToGallery) {
+        if (settings.saveToGallery && item.type != MediaType.audio) {
           final saveResult = item.type == MediaType.video
               ? await galleryService.saveVideo(path)
               : await galleryService.saveImage(path);
@@ -156,6 +156,22 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
     await ref.read(reviewServiceProvider).requestReview();
   }
 
+  IconData _icon(MediaType type) {
+    return switch (type) {
+      MediaType.audio => Icons.music_note_rounded,
+      MediaType.image => Icons.image_rounded,
+      MediaType.video => Icons.videocam_rounded,
+    };
+  }
+
+  Color _iconColor(MediaType type) {
+    return switch (type) {
+      MediaType.audio => AppColors.successGreen,
+      MediaType.image => AppColors.facebookBlue,
+      MediaType.video => AppColors.primaryPurple,
+    };
+  }
+
   void _showMessage(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -183,16 +199,10 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: (item.type == MediaType.audio
-                      ? AppColors.successGreen
-                      : AppColors.primaryPurple)
-                  .withValues(alpha: 0.12),
+              color: _iconColor(item.type).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              item.type == MediaType.audio ? Icons.music_note_rounded : Icons.videocam_rounded,
-              color: item.type == MediaType.audio ? AppColors.successGreen : AppColors.primaryPurple,
-            ),
+            child: Icon(_icon(item.type), color: _iconColor(item.type)),
           ),
           const SizedBox(width: 12),
           Expanded(

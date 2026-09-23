@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../models/media_item.dart';
 import '../../providers/api_providers.dart';
 import 'widgets/media_item_tile.dart';
 
@@ -38,13 +40,29 @@ class MediaResultScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    response.title,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          response.title,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.copy_rounded, size: 20),
+                        color: AppColors.textSecondary,
+                        tooltip: 'Copy title & hashtags',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: response.title.isEmpty
+                            ? null
+                            : () => _copyTitle(context, response.title),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -69,9 +87,39 @@ class MediaResultScreen extends ConsumerWidget {
                       sourceUrl: response.id,
                       thumbnailUrl: response.thumbnail,
                     ),
+                  if (response.thumbnail.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Thumbnail',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    MediaItemTile(
+                      item: MediaItem.thumbnail(response.thumbnail),
+                      sourceTitle: response.title,
+                      platform: response.source,
+                      sourceUrl: response.id,
+                      thumbnailUrl: response.thumbnail,
+                    ),
+                  ],
                 ],
               ),
             ),
+    );
+  }
+
+  Future<void> _copyTitle(BuildContext context, String title) async {
+    await Clipboard.setData(ClipboardData(text: title));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Copied to clipboard.'),
+        backgroundColor: AppColors.successGreen,
+      ),
     );
   }
 }
