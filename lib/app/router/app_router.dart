@@ -32,8 +32,23 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
     transitionDuration: const Duration(milliseconds: 350),
     reverseTransitionDuration: const Duration(milliseconds: 250),
     child: child,
-    transitionsBuilder: (_, animation, _, child) =>
-        FadeTransition(opacity: animation, child: child),
+    // Composes BOTH animations so the outgoing page fades out in step with
+    // the incoming page fading in, instead of sitting static/blended
+    // underneath it (ignoring secondaryAnimation previously let a covered
+    // page - e.g. splash, mid cross-fade to onboarding/home - stay fully
+    // opaque while the new page faded in on top, which could read as a
+    // frozen/blended overlay rather than a clean transition).
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final fadeIn = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+      final fadeOut = CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn);
+      return FadeTransition(
+        opacity: fadeIn,
+        child: FadeTransition(
+          opacity: Tween<double>(begin: 1, end: 0).animate(fadeOut),
+          child: child,
+        ),
+      );
+    },
   );
 }
 

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../app/bootstrap.dart';
 import '../../app/router/route_paths.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/widgets/dot_page_indicator.dart';
 import '../../core/widgets/gradient_background.dart';
 import '../../core/widgets/vidzora_logo.dart';
 import '../../providers/onboarding_providers.dart';
@@ -116,8 +115,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const DotPageIndicator(count: 3, activeIndex: 0),
                     const SizedBox(height: 40),
                   ],
                 ),
