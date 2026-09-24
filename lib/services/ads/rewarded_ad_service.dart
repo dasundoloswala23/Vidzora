@@ -4,6 +4,20 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../core/constants/ad_unit_ids.dart';
 import 'ads_bootstrap.dart';
 
+/// The outcome of [RewardedAdService.showAdAndAwaitReward].
+enum RewardedAdResult {
+  /// The ad played and the user earned the reward.
+  earned,
+
+  /// The ad played but was dismissed before the reward was earned.
+  dismissedWithoutReward,
+
+  /// No ad could be shown at all (SDK not ready, no fill, network issue).
+  /// Callers treat this as "ads aren't supported right now" rather than a
+  /// reason to block the feature the ad was gating.
+  unavailable,
+}
+
 /// Manages loading and showing a rewarded ad, used to gate HD downloads.
 class RewardedAdService {
   RewardedAd? _ad;
@@ -57,31 +71,39 @@ class RewardedAdService {
     return completer.future;
   }
 
-  /// Shows the rewarded ad and resolves `true` only if the user earned the
-  /// reward before the ad was dismissed. Always preloads the next ad after.
-  Future<bool> showAdAndAwaitReward() async {
+  /// Shows the rewarded ad. Always preloads the next ad after a shown ad is
+  /// dismissed. See [RewardedAdResult] for how callers should treat each
+  /// outcome — in particular, [RewardedAdResult.unavailable] is not a
+  /// failure to gate on, since it means ads aren't working right now.
+  Future<RewardedAdResult> showAdAndAwaitReward() async {
     if (_ad == null) {
       final loaded = await _loadAndWait();
       if (!loaded || _ad == null) {
-        return false;
+        return RewardedAdResult.unavailable;
       }
     }
 
     final ad = _ad!;
     _ad = null;
-    final rewardCompleter = Completer<bool>();
+    final rewardCompleter = Completer<RewardedAdResult>();
     var earnedReward = false;
 
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
         preload();
-        if (!rewardCompleter.isCompleted) rewardCompleter.complete(earnedReward);
+        if (!rewardCompleter.isCompleted) {
+          rewardCompleter.complete(
+            earnedReward ? RewardedAdResult.earned : RewardedAdResult.dismissedWithoutReward,
+          );
+        }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         ad.dispose();
         preload();
-        if (!rewardCompleter.isCompleted) rewardCompleter.complete(false);
+        if (!rewardCompleter.isCompleted) {
+          rewardCompleter.complete(RewardedAdResult.unavailable);
+        }
       },
     );
 

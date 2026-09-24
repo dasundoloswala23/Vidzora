@@ -20,6 +20,7 @@ import 'package:vidzora/app/vidzora_app.dart';
 import 'package:vidzora/core/constants/hive_box_names.dart';
 import 'package:vidzora/models/app_settings.dart';
 import 'package:vidzora/models/download_history_entry.dart';
+import 'package:vidzora/core/widgets/gradient_background.dart';
 import 'package:vidzora/providers/ad_providers.dart';
 import 'package:vidzora/providers/onboarding_providers.dart';
 import 'package:vidzora/services/ads/ad_service.dart';
@@ -30,6 +31,29 @@ class _NoopAdService extends AdService {
 }
 
 void main() {
+  // Regression guard: GradientBackground used to be a bare Container with only
+  // a decoration, which shrink-wraps to its child under loose constraints. On
+  // device that rendered the splash gradient as a narrow left-aligned strip
+  // the width of the logo, with the Scaffold's white background filling the
+  // rest — it looked like the screen was split in half.
+  testWidgets('GradientBackground fills loose constraints, not its child',
+      (tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        // Center hands down loose constraints, which is what triggered it.
+        child: Center(
+          child: GradientBackground(child: SizedBox(width: 40, height: 40)),
+        ),
+      ),
+    );
+
+    final painted = tester.getSize(find.byType(GradientBackground));
+    final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
+    expect(painted.width, screen.width);
+    expect(painted.height, screen.height);
+  });
+
   late Directory tempDir;
 
   setUp(() async {

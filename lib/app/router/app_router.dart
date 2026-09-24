@@ -20,21 +20,14 @@ class _OnboardingRefreshListenable extends ChangeNotifier {
   }
 }
 
-/// Cross-fade instead of the default Material push.
-///
-/// Used only where the purple splash hands off to a lavender screen, where a
-/// slide/cut reads as a glitch. Tab switching goes through
-/// `navigationShell.goBranch()`, which doesn't re-push the shell page, so
-/// applying this to the shell route animates shell *entry* only.
-CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
-  return CustomTransitionPage<void>(
-    key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 350),
-    reverseTransitionDuration: const Duration(milliseconds: 250),
-    child: child,
-    transitionsBuilder: (_, animation, _, child) =>
-        FadeTransition(opacity: animation, child: child),
-  );
+/// No route-level animation at all for splash/onboarding/shell: on a real
+/// device, even a plain [CustomTransitionPage] fade could still land mid-flight
+/// during a startup hitch and look like a slide/tear. [SplashScreen] instead
+/// does its own self-contained fade-and-color-crossfade before calling
+/// `context.go`, so by the time this instant swap happens the frame
+/// underneath already matches — there is no transition left to glitch.
+NoTransitionPage<void> _instantPage(GoRouterState state, Widget child) {
+  return NoTransitionPage<void>(key: state.pageKey, child: child);
 }
 
 /// Builds the app's [GoRouter] exactly once (this provider deliberately
@@ -69,14 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: RoutePaths.splash,
-        // Also a fade page: as a MaterialPage its *exit* would use the iOS
-        // Cupertino slide, so the splash slid left while onboarding faded in
-        // over it. Ignoring secondaryAnimation here keeps it still.
-        pageBuilder: (context, state) => _fadePage(state, const SplashScreen()),
+        pageBuilder: (context, state) => _instantPage(state, const SplashScreen()),
       ),
       GoRoute(
         path: RoutePaths.onboarding,
-        pageBuilder: (context, state) => _fadePage(state, const OnboardingScreen()),
+        pageBuilder: (context, state) => _instantPage(state, const OnboardingScreen()),
       ),
       GoRoute(
         path: RoutePaths.mediaResult,
@@ -84,7 +74,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       StatefulShellRoute.indexedStack(
         pageBuilder: (context, state, navigationShell) =>
-            _fadePage(state, RootShell(navigationShell: navigationShell)),
+            _instantPage(state, RootShell(navigationShell: navigationShell)),
         branches: [
           StatefulShellBranch(
             routes: [
