@@ -12,6 +12,7 @@ import '../../../providers/ad_providers.dart';
 import '../../../providers/download_providers.dart';
 import '../../../providers/settings_providers.dart';
 import '../../../providers/update_providers.dart';
+import '../../../services/ads/rewarded_ad_service.dart';
 import '../../../services/download/download_service.dart';
 import '../../../services/gallery/gallery_service.dart';
 
@@ -50,12 +51,15 @@ class _MediaItemTileState extends ConsumerState<MediaItemTile> {
       if (proceed != true) return;
 
       setState(() => _isBusy = true);
-      final earned = await ref.read(rewardedAdServiceProvider).showAdAndAwaitReward();
+      final result = await ref.read(rewardedAdServiceProvider).showAdAndAwaitReward();
       if (!mounted) return;
 
-      if (!earned) {
+      // Only block on a shown-but-abandoned ad. If ads aren't available at
+      // all (no fill, SDK not ready, offline), don't hold a core feature
+      // hostage to the ad network being down — just let the download through.
+      if (result == RewardedAdResult.dismissedWithoutReward) {
         setState(() => _isBusy = false);
-        _showMessage('Ad unavailable or not completed. HD download cancelled.', isError: true);
+        _showMessage('Ad not completed. HD download cancelled.', isError: true);
         return;
       }
     } else {
