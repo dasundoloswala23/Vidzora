@@ -69,7 +69,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: RoutePaths.splash,
-        builder: (context, state) => const SplashScreen(),
+        // Also a fade page: as a MaterialPage its *exit* would use the iOS
+        // Cupertino slide, so the splash slid left while onboarding faded in
+        // over it. Ignoring secondaryAnimation here keeps it still.
+        pageBuilder: (context, state) => _fadePage(state, const SplashScreen()),
       ),
       GoRoute(
         path: RoutePaths.onboarding,

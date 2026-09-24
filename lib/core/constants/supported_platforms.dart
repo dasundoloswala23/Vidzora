@@ -45,6 +45,12 @@ class SupportedPlatforms {
       icon: Icons.facebook_rounded,
       color: facebookBlue,
     ),
+    SupportedPlatform(
+      id: 'linkedin',
+      label: 'LinkedIn',
+      icon: Icons.business_center_rounded,
+      color: linkedinBlue,
+    ),
   ];
 
   static SupportedPlatform byId(String id) {

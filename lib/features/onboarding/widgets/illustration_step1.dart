@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/supported_platforms.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 
 /// Onboarding step 1 illustration: a phone mockup with placeholder lines
-/// and a purple download button, plus a pill badge showing the supported
-/// platform icons.
+/// and a purple download button.
 class IllustrationStep1 extends StatelessWidget {
   const IllustrationStep1({super.key});
 
@@ -51,24 +49,6 @@ class IllustrationStep1 extends StatelessWidget {
                   size: 28,
                 ),
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.primaryPurple.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final platform in SupportedPlatforms.all) ...[
-                Icon(platform.icon, size: 14, color: platform.color),
-                if (platform != SupportedPlatforms.all.last)
-                  const SizedBox(width: 8),
-              ],
             ],
           ),
         ),

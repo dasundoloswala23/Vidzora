@@ -2,33 +2,43 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../core/constants/ad_unit_ids.dart';
+import 'ads_bootstrap.dart';
 
 /// Manages loading and showing a rewarded ad, used to gate HD downloads.
 class RewardedAdService {
   RewardedAd? _ad;
   bool _isLoading = false;
+  bool _disposed = false;
 
   void preload() {
     if (_isLoading || _ad != null) return;
     _isLoading = true;
-    RewardedAd.load(
-      adUnitId: AdUnitIds.rewarded,
-      request: const AdRequest(),
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdLoaded: (ad) {
-          _ad = ad;
-          _isLoading = false;
-        },
-        onAdFailedToLoad: (error) {
-          _ad = null;
-          _isLoading = false;
-          debugPrint('Rewarded ad failed to load: $error');
-        },
-      ),
-    );
+    AdsBootstrap.ensureInitialized().then((_) {
+      if (_disposed) return;
+      RewardedAd.load(
+        adUnitId: AdUnitIds.rewarded,
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (ad) {
+            if (_disposed) {
+              ad.dispose();
+              return;
+            }
+            _ad = ad;
+            _isLoading = false;
+          },
+          onAdFailedToLoad: (error) {
+            _ad = null;
+            _isLoading = false;
+            debugPrint('Rewarded ad failed to load: $error');
+          },
+        ),
+      );
+    });
   }
 
   Future<bool> _loadAndWait() async {
+    await AdsBootstrap.ensureInitialized();
     final completer = Completer<bool>();
     RewardedAd.load(
       adUnitId: AdUnitIds.rewarded,
@@ -85,6 +95,7 @@ class RewardedAdService {
   }
 
   void dispose() {
+    _disposed = true;
     _ad?.dispose();
   }
 }

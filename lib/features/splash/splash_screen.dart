@@ -106,6 +106,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       ),
                     ),
                     const Spacer(flex: 4),
+                    SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white.withValues(alpha: 0.85),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     const DotPageIndicator(count: 3, activeIndex: 0),
                     const SizedBox(height: 40),
                   ],

@@ -1,26 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../core/constants/ad_unit_ids.dart';
+import 'ads_bootstrap.dart';
 
 /// Preloads interstitial ads and shows one every 3rd completed download.
 class InterstitialAdService {
   InterstitialAd? _ad;
   int _downloadCount = 0;
+  bool _disposed = false;
 
   void preload() {
-    InterstitialAd.load(
-      adUnitId: AdUnitIds.interstitial,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          _ad = ad;
-        },
-        onAdFailedToLoad: (error) {
-          _ad = null;
-          debugPrint('Interstitial ad failed to load: $error');
-        },
-      ),
-    );
+    AdsBootstrap.ensureInitialized().then((_) {
+      if (_disposed) return;
+      InterstitialAd.load(
+        adUnitId: AdUnitIds.interstitial,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            if (_disposed) {
+              ad.dispose();
+              return;
+            }
+            _ad = ad;
+          },
+          onAdFailedToLoad: (error) {
+            _ad = null;
+            debugPrint('Interstitial ad failed to load: $error');
+          },
+        ),
+      );
+    });
   }
 
   /// Call after a download completes. Every 3rd call shows the preloaded
@@ -55,6 +64,7 @@ class InterstitialAdService {
   }
 
   void dispose() {
+    _disposed = true;
     _ad?.dispose();
   }
 }
