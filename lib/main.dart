@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'app/bootstrap.dart';
 import 'app/vidzora_app.dart';
 import 'core/constants/hive_box_names.dart';
-import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'models/app_settings.dart';
 import 'models/download_history_entry.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // These stay awaited: the onboarding flag is read synchronously by the
+  // router's redirect on the very first route resolution. They're local-file
+  // I/O, so single-digit milliseconds.
   await Hive.initFlutter();
   Hive.registerAdapter(DownloadHistoryEntryAdapter());
   Hive.registerAdapter(AppSettingsAdapter());
@@ -19,18 +20,14 @@ Future<void> main() async {
   await Hive.openBox<AppSettings>(HiveBoxNames.settingsBox);
   await Hive.openBox(HiveBoxNames.onboardingBox);
 
-  await Future.wait<void>([
-    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-        .then<void>((_) {})
-        .catchError((e) {
-      debugPrint('Firebase init failed: $e');
-    }),
-    MobileAds.instance.initialize()
-        .then<void>((_) {})
-        .catchError((e) {
-      debugPrint('MobileAds init failed: $e');
-    }),
-  ]);
+  // Started but NOT awaited, so the first frame isn't gated on the ad SDK.
+  // The splash awaits this instead.
+  final bootstrap = bootstrapServices();
 
-  runApp(const ProviderScope(child: VidzoraApp()));
+  runApp(
+    ProviderScope(
+      overrides: [bootstrapFutureProvider.overrideWithValue(bootstrap)],
+      child: const VidzoraApp(),
+    ),
+  );
 }

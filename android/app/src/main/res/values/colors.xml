@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#3A0A8D</color>
+    <!-- Window background behind Flutter during engine attach. Matches the
+         splash so there is no white/black flash between the launch window
+         tearing down and Flutter's first frame. -->
+    <color name="splash_background">#7B3FE4</color>
 </resources>

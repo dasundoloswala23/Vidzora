@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/downloads/downloads_screen.dart';
@@ -18,6 +18,23 @@ class _OnboardingRefreshListenable extends ChangeNotifier {
   _OnboardingRefreshListenable(Ref ref) {
     ref.listen<bool>(hasSeenOnboardingProvider, (_, _) => notifyListeners());
   }
+}
+
+/// Cross-fade instead of the default Material push.
+///
+/// Used only where the purple splash hands off to a lavender screen, where a
+/// slide/cut reads as a glitch. Tab switching goes through
+/// `navigationShell.goBranch()`, which doesn't re-push the shell page, so
+/// applying this to the shell route animates shell *entry* only.
+CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 350),
+    reverseTransitionDuration: const Duration(milliseconds: 250),
+    child: child,
+    transitionsBuilder: (_, animation, _, child) =>
+        FadeTransition(opacity: animation, child: child),
+  );
 }
 
 /// Builds the app's [GoRouter] exactly once (this provider deliberately
@@ -56,15 +73,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RoutePaths.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) => _fadePage(state, const OnboardingScreen()),
       ),
       GoRoute(
         path: RoutePaths.mediaResult,
         builder: (context, state) => const MediaResultScreen(),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            RootShell(navigationShell: navigationShell),
+        pageBuilder: (context, state, navigationShell) =>
+            _fadePage(state, RootShell(navigationShell: navigationShell)),
         branches: [
           StatefulShellBranch(
             routes: [
